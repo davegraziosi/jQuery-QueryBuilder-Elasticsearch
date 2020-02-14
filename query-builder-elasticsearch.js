@@ -45,24 +45,24 @@
             is_null:          function(){ return "exists"; },
             is_not_empty:     function(){ return "term"; },
             is_not_null:      function(){ return "exists"; },
-            contains:         function(v){ if (typeof v === 'string') return v.toLowerCase(); else return v; },
-   	    not_contains:     function(v){ if (typeof v === 'string') return v.toLowerCase(); else return v; },
-            equal:            function(v){ if (typeof v === 'string') return v.toLowerCase(); else return v; },
-            not_equal:        function(v){ if (typeof v === 'string') return v.toLowerCase(); else return v; },
-	    begins_with:      function(v){ if (typeof v === 'string') return v.toLowerCase(); else return v; },
-	    ends_with:      function(v){ if (typeof v === 'string') return v.toLowerCase(); else return v; },
-	    not_begins_with:      function(v){ if (typeof v === 'string') return v.toLowerCase(); else return v; },
-	    not_ends_with:      function(v){ if (typeof v === 'string') return v.toLowerCase(); else return v; },
+            contains:         function(v){ if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
+   	    not_contains:     function(v){ if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
+            equal:            function(v){ if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
+            not_equal:        function(v){ if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
+	    begins_with:      function(v){ if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
+	    ends_with:      function(v){ if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
+	    not_begins_with:      function(v){ if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
+	    not_ends_with:      function(v){ if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
             less:             function(v){ return {'lt': v}; },
             less_or_equal:    function(v){ return {'lte': v}; },
             greater:          function(v){ return {'gt': v}; },
             greater_or_equal: function(v){ return {'gte': v}; },
             between:          function(v){ return {'gte': v[0], 'lte': v[1]}; },
 	    not_between:      function(v){ return {'gte': v[0], 'lte': v[1]}; },
-            in :              function(v){ if (typeof v === 'string') return v.split(',').map(function(e) { return e.toString().trim().toLowerCase();});
-            							  else return v.map(function(e) { return e.toString().trim().toLowerCase();}); },
-            not_in:           function(v){ if (typeof v === 'string') return v.split(',').map(function(e) { return e.toString().trim().toLowerCase();});
-            							   else return v.map(function(e) { return e.toString().trim().toLowerCase();}); },
+            in :              function(v){ if (typeof v === 'string') return v.split(',').map(function(e) { return escapeBackSlash(e.toString().trim().toLowerCase());});
+            							  else return v.map(function(e) { return escapeBackSlash(e.toString().trim().toLowerCase());}); },
+            not_in:           function(v){ if (typeof v === 'string') return v.split(',').map(function(e) { return escapeBackSlash(e.toString().trim().toLowerCase());});
+            							   else return v.map(function(e) { return escapeBackSlash(e.toString().trim().toLowerCase());}); },
 	        last_n_minutes:   function(v){ 
 			     if (Array.isArray(v) && v.lenght==2 )  
 				return {'gte': v[0], 'lt': v[1], 'time_zone': moment.tz.guess()};
@@ -384,5 +384,19 @@
         if (condition === 'OR') { return 'should' }
     }
 
+    function escapeBackSlash(value) {
+    	if (typeof value != 'string') {
+            return value;
+        }
+
+        return value
+            .replace(/[\\]/g, function(s) {
+                switch (s) {
+                    // @formatter:off
+                default:   return '\\' + s;
+                // @formatter:off
+                }
+            });
+    }
 }));
 
