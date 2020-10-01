@@ -45,14 +45,14 @@
             is_null:          function(){ return "exists"; },
             is_not_empty:     function(){ return "term"; },
             is_not_null:      function(){ return "exists"; },
-            contains:         function(v){ if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
-   	    not_contains:     function(v){ if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
+            contains:         function(v){ if (typeof v === 'string') return ".*"+escapeRegexp(v.toLowerCase())+".*"; else return v; },
+   	    not_contains:     function(v){ if (typeof v === 'string') return ".*"+escapeRegexp(v.toLowerCase())+".*"; else return v; },
             equal:            function(v){ if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
             not_equal:        function(v){ if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
-	    begins_with:      function(v){ if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
-	    ends_with:      function(v){ if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
-	    not_begins_with:      function(v){ if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
-	    not_ends_with:      function(v){ if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
+	    begins_with:      function(v){ if (typeof v === 'string') return escapeRegexp(v.toLowerCase())+".*"; else return v; },
+	    ends_with:      function(v){ if (typeof v === 'string') return ".*"+escapeRegexp(v.toLowerCase()); else return v; },
+	    not_begins_with:      function(v){ if (typeof v === 'string') return escapeRegexp(v.toLowerCase())+".*"; else return v; },
+	    not_ends_with:      function(v){ if (typeof v === 'string') return ".*"+escapeRegexp(v.toLowerCase()); else return v; },
             less:             function(v){ return {'lt': v}; },
             less_or_equal:    function(v){ return {'lte': v}; },
             greater:          function(v){ return {'gt': v}; },
@@ -159,9 +159,9 @@
                         if (rule.data && rule.data.hasOwnProperty('transform')) {
                             return window[rule.data.transform].call(this, rule.value);
                         } else {
-			    if (rule.operator === 'begins_with' || rule.operator === 'not_begins_with') return rule.value+".*";
-			    if (rule.operator === 'ends_with' || rule.operator === 'not_ends_with') return ".*"+rule.value;
-			    if (rule.operator === 'contains' || rule.operator === 'not_contains') return ".*"+rule.value+".*";
+			    //if (rule.operator === 'begins_with' || rule.operator === 'not_begins_with') return rule.value+".*";
+			    //if (rule.operator === 'ends_with' || rule.operator === 'not_ends_with') return ".*"+rule.value;
+			    //if (rule.operator === 'contains' || rule.operator === 'not_contains') return ".*"+rule.value+".*";
                             if (rule.operator === 'is_empty' || rule.operator === 'is_not_empty') return "";
                             return rule.value;
                         }
@@ -397,6 +397,16 @@
                 // @formatter:off
                 }
             });
+    }
+
+    function escapeRegexp(value) {
+	if (typeof value != 'string')
+    	  return value;
+        return value.replace(/[\x28\x29\x5B\x5C\x5D\x5E\x7B\x7C\x7D.+?*]/g, function (s) {
+    	  switch (s){
+            default: return '\\' + s;
+          }
+        });
     }
 }));
 
