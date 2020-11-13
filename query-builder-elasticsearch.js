@@ -45,18 +45,18 @@
             is_null:          function(){ return "exists"; },
             is_not_empty:     function(){ return "term"; },
             is_not_null:      function(){ return "exists"; },
-            contains:         function(v){ if (typeof v === 'string') return ".*"+escapeRegexp(v.toLowerCase())+".*"; else return v; },
-   	    not_contains:     function(v){ if (typeof v === 'string') return ".*"+escapeRegexp(v.toLowerCase())+".*"; else return v; },
-            equal:            function(v){ if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
-            not_equal:        function(v){ if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
-	    begins_with:      function(v){ if (typeof v === 'string') return escapeRegexp(v.toLowerCase())+".*"; else return v; },
-	    ends_with:      function(v){ if (typeof v === 'string') return ".*"+escapeRegexp(v.toLowerCase()); else return v; },
-	    not_begins_with:      function(v){ if (typeof v === 'string') return escapeRegexp(v.toLowerCase())+".*"; else return v; },
-	    not_ends_with:      function(v){ if (typeof v === 'string') return ".*"+escapeRegexp(v.toLowerCase()); else return v; },
-            less:             function(v){ return {'lt': v}; },
-            less_or_equal:    function(v){ return {'lte': v}; },
-            greater:          function(v){ return {'gt': v}; },
-            greater_or_equal: function(v){ return {'gte': v}; },
+            contains:         function(v){ if (Array.isArray(v)) v=v[0]; if (typeof v === 'string') return ".*"+escapeRegexp(v.toLowerCase())+".*"; else return v; },
+   	    not_contains:     function(v){ if (Array.isArray(v)) v=v[0]; if (typeof v === 'string') return ".*"+escapeRegexp(v.toLowerCase())+".*"; else return v; },
+            equal:            function(v){ if (Array.isArray(v)) v=v[0]; if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
+            not_equal:        function(v){ if (Array.isArray(v)) v=v[0]; if (typeof v === 'string') return escapeBackSlash(v.toLowerCase()); else return v; },
+	    begins_with:      function(v){ if (Array.isArray(v)) v=v[0]; if (typeof v === 'string') return escapeRegexp(v.toLowerCase())+".*"; else return v; },
+	    ends_with:      function(v){ if (Array.isArray(v)) v=v[0]; if (typeof v === 'string') return ".*"+escapeRegexp(v.toLowerCase()); else return v; },
+	    not_begins_with:      function(v){ if (Array.isArray(v)) v=v[0]; if (typeof v === 'string') return escapeRegexp(v.toLowerCase())+".*"; else return v; },
+	    not_ends_with:      function(v){ if (Array.isArray(v)) v=v[0]; if (typeof v === 'string') return ".*"+escapeRegexp(v.toLowerCase()); else return v; },
+            less:             function(v){ return {'lt': (Array.isArray(v) ? v[0] : v)}; },
+            less_or_equal:    function(v){ return {'lte': (Array.isArray(v) ? v[0] : v)}; },
+            greater:          function(v){ return {'gt': (Array.isArray(v) ? v[0] : v)}; },
+            greater_or_equal: function(v){ return {'gte': (Array.isArray(v) ? v[0] : v)}; },
             between:          function(v){ return {'gte': v[0], 'lte': v[1]}; },
 	    not_between:      function(v){ return {'gte': v[0], 'lte': v[1]}; },
             in :              function(v){ if (typeof v === 'string') return v.split(',').map(function(e) { return escapeBackSlash(e.toString().trim().toLowerCase());});
@@ -87,13 +87,15 @@
                 } 
                 return {'gte': v[0], 'lt': v[1], 'time_zone': moment.tz.guess()}; 
             },
-	        before_last_n_minutes:   function(v){ 
+	        before_last_n_minutes:   function(v){
+	        	if (Array.isArray(v)) v=v[0]; 
                 if (typeof v === 'number' || (typeof v === 'string' && /^\d+$/.exec(v))) 
                     return {'lt': 'now-'+v+'m', 'time_zone': moment.tz.guess()}; 
                 else
                     return {'lt': v, 'time_zone': moment.tz.guess()};
             },
-            before_last_n_days:   function(v){ 
+            before_last_n_days:   function(v){
+            	if (Array.isArray(v)) v=v[0]; 
                 if (typeof v === 'number' || (typeof v === 'string' && /^\d+$/.exec(v))) 
                     return {'lt': 'now-'+v+'d', 'time_zone': moment.tz.guess()}; 
                 else 
@@ -105,13 +107,13 @@
 		
         }, 
 	ESBoolDateOperators: {
-            equal:            function(v){ return {'lte': v, 'gte': v, 'format' : 'yyyy-MM-dd HH:mm:ssZ'}; },
-            not_equal:        function(v){ return {'lte': v, 'gte': v, 'format' : 'yyyy-MM-dd HH:mm:ssZ'}; },
-	    less:             function(v){ return {'lt': v , 'format' : 'yyyy-MM-dd HH:mm:ssZ'}; },
-            less_or_equal:    function(v){ return {'lte': v, 'format' : 'yyyy-MM-dd HH:mm:ssZ'}; },
-            greater:          function(v){ return {'gt': v, 'format' : 'yyyy-MM-dd HH:mm:ssZ'}; },
-            greater_or_equal: function(v){ return {'gte': v, 'format' : 'yyyy-MM-dd HH:mm:ssZ'}; },
-            between:          function(v){ return {'gte': v[0], 'lte': v[1], 'format' : 'yyyy-MM-dd HH:mm:ssZ'}; },
+        equal:            function(v){ if (Array.isArray(v)) v=v[0]; return {'lte': v, 'gte': v, 'format' : 'yyyy-MM-dd HH:mm:ssZ'}; },
+        not_equal:        function(v){ if (Array.isArray(v)) v=v[0]; return {'lte': v, 'gte': v, 'format' : 'yyyy-MM-dd HH:mm:ssZ'}; },
+	    less:             function(v){ if (Array.isArray(v)) v=v[0]; return {'lt': v , 'format' : 'yyyy-MM-dd HH:mm:ssZ'}; },
+        less_or_equal:    function(v){ if (Array.isArray(v)) v=v[0]; return {'lte': v, 'format' : 'yyyy-MM-dd HH:mm:ssZ'}; },
+        greater:          function(v){ if (Array.isArray(v)) v=v[0]; return {'gt': v, 'format' : 'yyyy-MM-dd HH:mm:ssZ'}; },
+        greater_or_equal: function(v){ if (Array.isArray(v)) v=v[0]; return {'gte': v, 'format' : 'yyyy-MM-dd HH:mm:ssZ'}; },
+        between:          function(v){ return {'gte': v[0], 'lte': v[1], 'format' : 'yyyy-MM-dd HH:mm:ssZ'}; },
 	    not_between:      function(v){ return {'gte': v[0], 'lte': v[1], 'format' : 'yyyy-MM-dd HH:mm:ssZ'}; },
 	}
     });
