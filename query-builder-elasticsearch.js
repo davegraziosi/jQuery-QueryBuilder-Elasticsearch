@@ -59,9 +59,9 @@
             greater_or_equal: function(v){ return {'gte': (Array.isArray(v) ? v[0] : v)}; },
             between:          function(v){ return {'gte': v[0], 'lte': v[1]}; },
 	    not_between:      function(v){ return {'gte': v[0], 'lte': v[1]}; },
-            in :              function(v){ if (typeof v === 'string') return v.split(',').map(function(e) { return escapeBackSlash(e.toString().trim().toLowerCase());});
+            in :              function(v){ if (Array.isArray(v) && v.lenght == 1) v=v[0]; if (typeof v === 'string') return v.split(',').map(function(e) { return escapeBackSlash(e.toString().trim().toLowerCase());});
             							  else return v.map(function(e) { return escapeBackSlash(e.toString().trim().toLowerCase());}); },
-            not_in:           function(v){ if (typeof v === 'string') return v.split(',').map(function(e) { return escapeBackSlash(e.toString().trim().toLowerCase());});
+            not_in:           function(v){ if (Array.isArray(v) && v.lenght == 1) v=v[0]; if (typeof v === 'string') return v.split(',').map(function(e) { return escapeBackSlash(e.toString().trim().toLowerCase());});
             							   else return v.map(function(e) { return escapeBackSlash(e.toString().trim().toLowerCase());}); },
 	        last_n_minutes:   function(v){ 
 			     if (Array.isArray(v) && v.lenght==2 )  
